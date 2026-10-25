@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/i8g0/nimo-matcha-preview.git"
+    "url": "git+https://github.com/i8g0/nimo-matcha-theme.git"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
