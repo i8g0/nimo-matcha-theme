@@ -7,6 +7,7 @@ import * as chrome from './nm/chrome.js';
 import * as motion from './nm/motion.js';
 import { defineCard, fillCups } from './nm/card.js';
 import { popup } from './nm/popup.js';
+import * as extras from './nm/extras.js';
 
 defineCard();
 cartUI.init();
@@ -26,6 +27,7 @@ const boot = () => {
   motion.rails();
   motion.videos();
   motion.timers();
+  extras.init();
 };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
@@ -35,5 +37,5 @@ else boot();
 let late;
 new MutationObserver(() => {
   clearTimeout(late);
-  late = setTimeout(() => { fillCups(); motion.story(); motion.rails(); }, 120);
+  late = setTimeout(() => { fillCups(); motion.story(); motion.rails(); extras.counters(); }, 120);
 }).observe(document.body, { childList: true, subtree: true });

@@ -123,6 +123,17 @@
     "theme_toggle": "الوضع الفاتح / الداكن",
     "maybe_later": "لاحقًا",
     "swipe": "اسحب لتغيير النكهة",
-    "added_short": "تمت الإضافة"
+    "added_short": "تمت الإضافة",
+    "play_video": "تشغيل الفيديو",
+    "pause_video": "إيقاف الفيديو",
+    "offer_ends_in": "ينتهي العرض بعد",
+    "use_code": "استخدم الكود",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "copy_code": "انسخ الكود",
+    "back_to_top": "العودة لأعلى الصفحة",
+    "only_left": "باقي :n قطع فقط",
+    "recent_eyebrow": "RECENTLY VIEWED",
+    "recent_title": "شاهدتها مؤخرًا"
   }
 }

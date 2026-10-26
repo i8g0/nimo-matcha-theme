@@ -1,0 +1,15 @@
+{#- Store-wide floating buttons, each switched on from the theme settings:
+    a WhatsApp chat button and a back-to-top button. They sit above the phone tab bar. -#}
+{% set wa = theme.settings.get('whatsapp') %}
+{% set show_wa = theme.settings.get('floating_whatsapp', true) and wa %}
+{% set show_top = theme.settings.get('back_to_top', true) %}
+{% if show_wa or show_top %}
+<div class="nm-float">
+    {% if show_top %}
+        <button class="nm-float__btn nm-float__top" type="button" data-nm-top aria-label="{{ trans('nm.back_to_top') }}">{% include 'components.nm.icon' with {name: 'up', size: 22} %}</button>
+    {% endif %}
+    {% if show_wa %}
+        <a class="nm-float__btn nm-float__wa" href="{{ wa }}" target="_blank" rel="noopener" aria-label="{{ trans('nm.whatsapp_us') }}">{% include 'components.nm.icon' with {name: 'whatsapp', size: 26} %}</a>
+    {% endif %}
+</div>
+{% endif %}

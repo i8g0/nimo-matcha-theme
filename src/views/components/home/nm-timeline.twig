@@ -1,0 +1,30 @@
+{#
+  The Nimo journey in steps (from the farm to the cup, or the brand's milestones). A line draws itself
+  as you scroll and each step appears in turn.
+| component.eyebrow, title, accent, description, tone |
+| component.steps[] | label (year or step), title, text, image |
+#}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'sand' %}
+{% set steps = component.steps|default([]) %}
+{% if steps|length %}
+<section class="nm-section nm-timeline nm-toned" data-tone="{{ tone }}" component-id="{{ componentId }}">
+    <div class="nm-container">
+        {% include 'components.nm.head' with {c: component, modifier: 'center'} %}
+        <ol class="nm-tl">
+            {% for s in steps %}
+                <li class="nm-tl__step" data-reveal>
+                    <span class="nm-tl__dot" aria-hidden="true"></span>
+                    <div class="nm-tl__card">
+                        {% if s.image %}<img src="{{ s.image }}" alt="" loading="lazy" width="480" height="320">{% endif %}
+                        <div>
+                            {% if s.label %}<span class="nm-tl__label">{{ s.label }}</span>{% endif %}
+                            <h3>{{ s.title }}</h3>
+                            {% if s.text %}<p>{{ s.text }}</p>{% endif %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+</section>
+{% endif %}

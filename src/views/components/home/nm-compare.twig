@@ -1,0 +1,41 @@
+{#
+  Side-by-side comparison (grades, sizes, boxes). Two or three columns; the first can be highlighted
+  as the recommended choice. A value of ✓ / ✗ (or نعم / لا) shows as a tick or a dash.
+| component.col_a, col_b, col_c | column titles (col_c optional) |
+| component.rows[] | label, a, b, c |
+| component.highlight | bool | component.badge | string | component.button, url |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set rows = component.rows|default([]) %}
+{% set three = component.col_c ? true : false %}
+{% set href = nm.href(component.url)|trim %}
+{% macro cell(v) -%}
+    {%- if v in ['✓', '✔', 'نعم', 'yes', 'Yes'] -%}<span class="nm-cmp__yes" aria-label="✓">{% include 'components.nm.icon' with {name: 'check', size: 18} %}</span>
+    {%- elseif v in ['✗', '✕', 'لا', 'no', 'No', '-'] -%}<span class="nm-cmp__no" aria-label="✗">—</span>
+    {%- else -%}{{ v }}{%- endif -%}
+{%- endmacro %}
+{% import _self as m %}
+{% if rows|length %}
+<section class="nm-section nm-compare" component-id="{{ componentId }}">
+    <div class="nm-container">
+        {% include 'components.nm.head' with {c: component, modifier: 'center'} %}
+        <div class="nm-cmp {{ component.highlight is same as(false) ? '' : 'nm-cmp--hl' }}" style="--cols: {{ three ? 3 : 2 }}" data-reveal>
+            <div class="nm-cmp__row nm-cmp__row--head" role="row">
+                <span role="columnheader"></span>
+                <span role="columnheader" class="nm-cmp__a">{% if component.badge and component.highlight is not same as(false) %}<em>{{ component.badge }}</em>{% endif %}{{ component.col_a }}</span>
+                <span role="columnheader">{{ component.col_b }}</span>
+                {% if three %}<span role="columnheader">{{ component.col_c }}</span>{% endif %}
+            </div>
+            {% for r in rows %}
+                <div class="nm-cmp__row" role="row">
+                    <span role="rowheader">{{ r.label }}</span>
+                    <span role="cell" class="nm-cmp__a">{{ m.cell(r.a) }}</span>
+                    <span role="cell">{{ m.cell(r.b) }}</span>
+                    {% if three %}<span role="cell">{{ m.cell(r.c) }}</span>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if component.button %}<div class="nm-center"><a class="nm-btn" href="{{ href }}">{{ component.button }}{% include 'components.nm.icon' with {name: 'arrow', size: 18} %}</a></div>{% endif %}
+    </div>
+</section>
+{% endif %}

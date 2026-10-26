@@ -1,0 +1,31 @@
+{#
+  An endless strip of photos drifting slowly sideways (customer photos, drinks, the box…).
+  It stops while hovered, and stands still for shoppers who prefer reduced motion or on weak devices.
+| component.images[] | image, url | component.speed | slow/normal/fast | component.height | small/medium/large |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set images = [] %}
+{% for i in component.images|default([]) %}{% if i.image %}{% set images = images|merge([i]) %}{% endif %}{% endfor %}
+{% set speed = include('components.nm.pick', {v: component.speed})|trim ?: 'normal' %}
+{% set size = include('components.nm.pick', {v: component.height})|trim ?: 'medium' %}
+{% if images|length %}
+<section class="nm-section nm-section--tight nm-marquee nm-marquee--{{ speed }} nm-marquee--{{ size }}" component-id="{{ componentId }}">
+    {% if component.title or component.eyebrow %}<div class="nm-container">{% include 'components.nm.head' with {c: component, modifier: 'center'} %}</div>{% endif %}
+    <div class="nm-marquee__viewport">
+        <div class="nm-marquee__track">
+            {% for pass in 1..2 %}
+                <ul class="nm-marquee__list" {{ pass == 2 ? 'aria-hidden="true"' : '' }}>
+                    {% for i in images %}
+                        {% set href = nm.href(i.url)|trim %}
+                        <li>
+                            {% if href != '#' %}<a href="{{ href }}" {{ pass == 2 ? 'tabindex="-1"' : '' }}>{% endif %}
+                            <img src="{{ i.image }}" alt="{{ pass == 1 ? (i.caption ?: '') : '' }}" loading="lazy" width="400" height="500">
+                            {% if href != '#' %}</a>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

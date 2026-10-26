@@ -1,0 +1,29 @@
+{#
+  Reassurance strip: short guarantees with icons and, optionally, the store's payment methods
+  (drawn by Salla from the payment options switched on in the dashboard).
+| component.items[] | icon, title, text | component.show_payments | bool | component.tone |
+#}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'paper' %}
+{% set items = component.items|default([]) %}
+<section class="nm-section nm-section--tight nm-trustbar nm-toned" data-tone="{{ tone }}" component-id="{{ componentId }}">
+    <div class="nm-container">
+        {% if component.title %}{% include 'components.nm.head' with {c: component, modifier: 'center'} %}{% endif %}
+        {% if items|length %}
+            <ul class="nm-trustbar__list" style="--n: {{ items|length }}">
+                {% for t in items %}
+                    {% set ic = include('components.nm.pick', {v: t.icon})|trim ?: 'shield' %}
+                    <li data-reveal>
+                        <span class="nm-trustbar__icon">{% include 'components.nm.icon' with {name: ic, size: 24} %}</span>
+                        <div><b>{{ t.title }}</b>{% if t.text %}<span>{{ t.text }}</span>{% endif %}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if component.show_payments is not same as(false) %}
+            <div class="nm-trustbar__pay">
+                {% if component.payments_label %}<span>{{ component.payments_label }}</span>{% endif %}
+                <salla-payments></salla-payments>
+            </div>
+        {% endif %}
+    </div>
+</section>

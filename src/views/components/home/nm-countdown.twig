@@ -1,0 +1,38 @@
+{#
+  Limited-time offer with a live countdown. The whole section hides itself when the end date passes,
+  so an expired offer never stays on the page.
+| component.tone | orange / pink / night / paper / sand / leaf |
+| component.eyebrow, title, accent, text, button, url, image, ends_at, products[] |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'pink' %}
+{% set href = nm.href(component.url)|trim %}
+{% set p = component.product|default([])|first %}
+<section class="nm-section nm-section--tight nm-countdown" component-id="{{ componentId }}" {% if component.ends_at %}data-nm-timer="{{ component.ends_at }}"{% endif %}>
+    <div class="nm-container">
+        <div class="nm-countdown__box nm-toned {{ component.image ? 'has-image' : '' }}" data-tone="{{ tone }}" {% if p %}data-nm-card{% endif %}>
+            <div class="nm-countdown__copy">
+                {% if component.eyebrow %}<span class="nm-eyebrow">{% include 'components.nm.icon' with {name: 'clock', size: 16} %}{{ component.eyebrow }}</span>{% endif %}
+                <h2 class="nm-countdown__title">{{ component.title }}{% if component.accent %} <span>{{ component.accent }}</span>{% endif %}</h2>
+                {% if component.text %}<p class="nm-countdown__text">{{ component.text|nl2br }}</p>{% endif %}
+                {% if component.ends_at %}
+                    <div class="nm-clock" role="timer" aria-label="{{ trans('nm.offer_ends_in') }}">
+                        <div><b data-d>00</b><span>{{ trans('nm.days') }}</span></div>
+                        <div><b data-h>00</b><span>{{ trans('nm.hours') }}</span></div>
+                        <div><b data-m>00</b><span>{{ trans('nm.minutes') }}</span></div>
+                        <div><b data-s>00</b><span>{{ trans('nm.seconds') }}</span></div>
+                    </div>
+                {% endif %}
+                <div class="nm-countdown__actions">
+                    {% if component.button %}<a class="nm-btn nm-btn--lg" href="{{ href }}">{{ component.button }}{% include 'components.nm.icon' with {name: 'arrow', size: 18} %}</a>{% endif %}
+                    {% if p and p.is_available %}
+                        <button class="nm-btn nm-btn--lg nm-btn--line" type="button" {{ nm.add_attrs(p) }}>{{ trans('nm.add_to_cart') }} · {{ p.price|money }}</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% if component.image %}
+                <figure class="nm-countdown__media"><img src="{{ component.image }}" alt="{{ component.title }}" loading="lazy" width="700" height="700" {% if p %}data-nm-fly-src{% endif %}></figure>
+            {% endif %}
+        </div>
+    </div>
+</section>

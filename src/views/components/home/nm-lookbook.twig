@@ -1,0 +1,37 @@
+{#
+  Shop the photo: dots placed on a lifestyle photo. Tapping a dot shows that product with its price
+  and an add-to-cart button. Dot positions are percentages from the photo's top and start (right in Arabic).
+| component.image, image_mobile, eyebrow, title, accent, description |
+| component.spots[] | x (0–100), y (0–100), product |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set spots = [] %}
+{% for s in component.spots|default([]) %}{% if s.product|default([])|length %}{% set spots = spots|merge([s]) %}{% endif %}{% endfor %}
+{% if component.image %}
+<section class="nm-section nm-lookbook" component-id="{{ componentId }}" data-nm-lookbook>
+    <div class="nm-container">
+        {% include 'components.nm.head' with {c: component} %}
+        <div class="nm-look" data-reveal>
+            <picture>
+                {% if component.image_mobile %}<source media="(max-width: 767px)" srcset="{{ component.image_mobile }}">{% endif %}
+                <img class="nm-look__img" src="{{ component.image }}" alt="{{ component.title }}" loading="lazy" width="1600" height="1000">
+            </picture>
+            {% for s in spots %}
+                {% set p = s.product|first %}
+                <div class="nm-look__spot" style="--x: {{ s.x ?: 50 }}; --y: {{ s.y ?: 50 }}" data-nm-card>
+                    <button class="nm-look__dot" type="button" data-nm-spot aria-expanded="false" aria-label="{{ p.name }}"><span></span></button>
+                    <div class="nm-look__card" role="dialog" aria-label="{{ p.name }}">
+                        <a href="{{ p.url }}"><img src="{{ p.image.url }}" alt="" loading="lazy" width="64" height="64" data-nm-fly-src></a>
+                        <a class="nm-look__info" href="{{ p.url }}"><strong>{{ p.name }}</strong><span class="nm-card__price">{{ nm.price(p) }}</span></a>
+                        {% if p.is_available %}
+                            <button class="nm-vcard__add" type="button" {{ nm.add_attrs(p) }} aria-label="{{ trans('nm.add_to_cart') }}: {{ p.name }}">
+                                {% include 'components.nm.icon' with {name: 'cart', size: 20} %}{% include 'components.nm.icon' with {name: 'check', size: 18} %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

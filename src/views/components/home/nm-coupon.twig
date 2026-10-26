@@ -1,0 +1,30 @@
+{#
+  A discount code on a ticket. One tap copies the code; an optional button takes the shopper shopping.
+| component.tone | orange / pink / night / paper / sand / leaf |
+| component.eyebrow, title, accent, text, code, note (expiry or terms), button, url |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'orange' %}
+{% set href = nm.href(component.url)|trim %}
+{% if component.code %}
+<section class="nm-section nm-section--tight nm-coupon" component-id="{{ componentId }}">
+    <div class="nm-container">
+        <div class="nm-ticket nm-toned" data-tone="{{ tone }}" data-reveal>
+            <div class="nm-ticket__copy">
+                {% if component.eyebrow %}<span class="nm-eyebrow">{{ component.eyebrow }}</span>{% endif %}
+                <h2 class="nm-ticket__title">{{ component.title }}{% if component.accent %} <span>{{ component.accent }}</span>{% endif %}</h2>
+                {% if component.text %}<p>{{ component.text|nl2br }}</p>{% endif %}
+            </div>
+            <div class="nm-ticket__code">
+                <span class="nm-ticket__label">{{ trans('nm.use_code') }}</span>
+                <button class="nm-ticket__btn" type="button" data-nm-copy="{{ component.code }}" data-done="{{ trans('nm.copied') }}" aria-label="{{ trans('nm.copy_code') }}: {{ component.code }}">
+                    <b dir="ltr">{{ component.code }}</b>
+                    <span class="nm-ticket__hint">{% include 'components.nm.icon' with {name: 'copy', size: 16} %}<i data-nm-copy-label>{{ trans('nm.copy') }}</i></span>
+                </button>
+                {% if component.note %}<small>{{ component.note }}</small>{% endif %}
+                {% if component.button %}<a class="nm-link" href="{{ href }}">{{ component.button }}{% include 'components.nm.icon' with {name: 'arrow', size: 16} %}</a>{% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}

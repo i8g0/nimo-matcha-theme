@@ -1,13 +1,17 @@
 {#
 | component.eyebrow, title, accent | string |
 | component.items[] | video (mp4), image (poster), product (Product[]) |
-Short vertical films; each one sells its product right under it. Films play muted while on screen.
+| component.tone | night / paper / sand |
+Short vertical films. Each film carries its product on a frosted card (photo, name, price, cart button),
+so the shopper adds it without leaving the video. Films play silently, only while on screen; the round
+button on each film pauses it. There is no sound control: the films are meant to be watched muted.
 #}
 {% import 'components.nm.macros' as nm %}
 {% set items = [] %}
 {% for v in component.items|default([]) %}{% if v.video %}{% set items = items|merge([v]) %}{% endif %}{% endfor %}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'night' %}
 {% if items|length %}
-<section class="nm-section nm-videos nm-toned" data-tone="night" component-id="{{ componentId }}">
+<section class="nm-section nm-videos nm-toned nm-videos--{{ tone }}" data-tone="{{ tone }}" component-id="{{ componentId }}">
     <div class="nm-container">
         <div class="nm-head nm-head--row">
             {% include 'components.nm.head' with {c: component} %}
@@ -22,22 +26,28 @@ Short vertical films; each one sells its product right under it. Films play mute
             {% for v in items %}
                 {% set p = v.product|first %}
                 <article class="nm-vcard" {% if p %}data-nm-card{% endif %}>
-                    <div class="nm-vcard__film">
-                        <video muted playsinline loop preload="none" {% if v.image %}poster="{{ v.image }}"{% endif %} data-nm-video data-src="{{ v.video }}" aria-label="{{ p ? p.name : component.title }}"></video>
-                        <span class="nm-vcard__play" aria-hidden="true">{% include 'components.nm.icon' with {name: 'play', size: 14} %}</span>
-                    </div>
-                    {% if p %}
-                        <div class="nm-vcard__product">
-                            <a href="{{ p.url }}"><img src="{{ p.image.url }}" alt="" loading="lazy" width="52" height="64" data-nm-fly-src></a>
-                            <div>
-                                <a href="{{ p.url }}"><strong>{{ p.name }}</strong></a>
-                                <span class="nm-card__price">{{ nm.price(p) }}</span>
+                    <div class="nm-vcard__film is-paused">
+                        <video muted playsinline loop preload="none" disablepictureinpicture {% if v.image %}poster="{{ v.image }}"{% endif %} data-nm-video data-src="{{ v.video }}" aria-label="{{ p ? p.name : component.title }}"></video>
+                        <button class="nm-vcard__pause" type="button" data-nm-vpause aria-pressed="true" aria-label="{{ trans('nm.play_video') }}" data-label-play="{{ trans('nm.play_video') }}" data-label-pause="{{ trans('nm.pause_video') }}">
+                            <span class="nm-vcard__i-pause">{% include 'components.nm.icon' with {name: 'pause', size: 16} %}</span>
+                            <span class="nm-vcard__i-play">{% include 'components.nm.icon' with {name: 'play', size: 16} %}</span>
+                        </button>
+                        {% if p %}
+                            <div class="nm-vcard__product">
+                                <a class="nm-vcard__thumb" href="{{ p.url }}" tabindex="-1" aria-hidden="true"><img src="{{ p.image.url }}" alt="" loading="lazy" width="64" height="64" data-nm-fly-src></a>
+                                <a class="nm-vcard__info" href="{{ p.url }}">
+                                    <strong>{{ p.name }}</strong>
+                                    <span class="nm-card__price">{{ nm.price(p) }}</span>
+                                </a>
+                                {% if p.is_available %}
+                                    <button class="nm-vcard__add" type="button" {{ nm.add_attrs(p) }} aria-label="{{ trans('nm.add_to_cart') }}: {{ p.name }}">
+                                        {% include 'components.nm.icon' with {name: 'cart', size: 20} %}
+                                        {% include 'components.nm.icon' with {name: 'check', size: 18} %}
+                                    </button>
+                                {% endif %}
                             </div>
-                            {% if p.is_available %}
-                                <button class="nm-addbtn nm-addbtn--sm" type="button" {{ nm.add_attrs(p) }} aria-label="{{ trans('nm.add_to_cart') }}: {{ p.name }}"><span class="nm-addbtn__a">{{ trans('nm.add') }}</span><span class="nm-addbtn__b">{% include 'components.nm.icon' with {name: 'check', size: 14} %}</span></button>
-                            {% endif %}
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </article>
             {% endfor %}
         </div>

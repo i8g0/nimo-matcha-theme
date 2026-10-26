@@ -11,7 +11,7 @@
 {% set has_options = product.options is defined and product.options|length %}
 
 {% block content %}
-<div class="nm-pdp" data-nm-product data-name="{{ product.name }}" data-price="{{ product.price }}">
+<div class="nm-pdp" data-nm-product data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" data-old="{{ product.is_on_sale ? product.regular_price : 0 }}" data-image="{{ product.image.url }}">
     <div class="nm-container">
         <nav class="nm-crumbs" aria-label="breadcrumb">
             <a href="{{ store.url }}">{{ trans('nm.home') }}</a>
@@ -59,6 +59,15 @@
                 </div>
                 <salla-installment price="{{ product.price }}"></salla-installment>
 
+                {% set low = theme.settings.get('low_stock_threshold', 5) %}
+                {% if product.is_available and product.quantity is defined and product.quantity and low and product.quantity <= low %}
+                    <p class="nm-low"><i aria-hidden="true"></i>{{ trans('nm.only_left')|replace({':n': product.quantity}) }}</p>
+                {% endif %}
+                {% set delivery = theme.settings.get('delivery_note') %}
+                {% if delivery %}
+                    <p class="nm-eta">{% include 'components.nm.icon' with {name: 'truck', size: 20} %}<span>{{ delivery }}</span></p>
+                {% endif %}
+
                 <div class="nm-value" data-nm-value hidden>
                     <div><b data-nm-value-cups></b><span>{{ trans('nm.cups_long') }}</span></div>
                     <div><b data-nm-value-per></b><span>{{ trans('nm.per_cup_long') }}</span></div>
@@ -91,11 +100,13 @@
                     {% if __preview is not defined %}<salla-product-availability product-id="{{ product.id }}"></salla-product-availability>{% endif %}
                 {% endif %}
 
+                {% if theme.settings.get('show_product_trust', true) %}
                 <ul class="nm-trust">
                     <li>{% include 'components.nm.icon' with {name: 'truck', size: 22} %}{{ trans('nm.fast_delivery') }}</li>
                     <li>{% include 'components.nm.icon' with {name: 'shield', size: 22} %}{{ trans('nm.secure_payment') }}</li>
                     <li>{% include 'components.nm.icon' with {name: 'leaf', size: 22} %}{{ trans('nm.japanese_matcha') }}</li>
                 </ul>
+                {% endif %}
 
                 <div class="nm-acc">
                     <details open>
@@ -128,6 +139,15 @@
             <salla-comments item-id="{{ product.id }}" type="product"></salla-comments>
         </div>
     </section>
+
+    {% if theme.settings.get('show_recently_viewed', true) %}
+        <section class="nm-pdp__more nm-recent" data-nm-recent hidden>
+            <div class="nm-container">
+                <div class="nm-head"><span class="nm-eyebrow">{{ trans('nm.recent_eyebrow') }}</span><h2 class="nm-head__title">{{ trans('nm.recent_title') }}</h2></div>
+                <ul class="nm-recent__list" data-nm-recent-list></ul>
+            </div>
+        </section>
+    {% endif %}
 
     <section class="nm-pdp__more">
         <div class="nm-container">

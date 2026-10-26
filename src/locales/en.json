@@ -123,6 +123,17 @@
     "theme_toggle": "Light / dark mode",
     "maybe_later": "Maybe later",
     "swipe": "Swipe to change flavour",
-    "added_short": "Added"
+    "added_short": "Added",
+    "play_video": "Play video",
+    "pause_video": "Pause video",
+    "offer_ends_in": "Offer ends in",
+    "use_code": "Use code",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copy_code": "Copy code",
+    "back_to_top": "Back to top",
+    "only_left": "Only :n left",
+    "recent_eyebrow": "RECENTLY VIEWED",
+    "recent_title": "Recently viewed"
   }
 }

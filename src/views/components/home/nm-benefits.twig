@@ -1,0 +1,28 @@
+{#
+  Why matcha: short benefits with icons around a centre photo (desktop), stacked under it (phone).
+| component.eyebrow, title, accent, description, image, tone |
+| component.items[] | icon, title, text |
+#}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'leaf' %}
+{% set items = component.items|default([]) %}
+{% set half = (items|length + 1) // 2 %}
+{% macro item(b) %}
+    {% set ic = include('components.nm.pick', {v: b.icon})|trim ?: 'leaf' %}
+    <li class="nm-ben__item" data-reveal>
+        <span class="nm-ben__icon">{% include 'components.nm.icon' with {name: ic, size: 24} %}</span>
+        <div><h3>{{ b.title }}</h3>{% if b.text %}<p>{{ b.text }}</p>{% endif %}</div>
+    </li>
+{% endmacro %}
+{% import _self as m %}
+{% if items|length %}
+<section class="nm-section nm-benefits nm-toned" data-tone="{{ tone }}" component-id="{{ componentId }}">
+    <div class="nm-container">
+        {% include 'components.nm.head' with {c: component, modifier: 'center'} %}
+        <div class="nm-ben {{ component.image ? 'has-image' : '' }}">
+            <ul class="nm-ben__col">{% for b in items|slice(0, half) %}{{ m.item(b) }}{% endfor %}</ul>
+            {% if component.image %}<figure class="nm-ben__media"><img src="{{ component.image }}" alt="" loading="lazy" width="600" height="600"></figure>{% endif %}
+            <ul class="nm-ben__col">{% for b in items|slice(half) %}{{ m.item(b) }}{% endfor %}</ul>
+        </div>
+    </div>
+</section>
+{% endif %}

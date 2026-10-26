@@ -1,0 +1,29 @@
+{#
+  A photo beside a short text, with optional bullet points and a button. The photo takes one of the
+  brand shapes (arch like the pouch window, circle, soft rectangle) and can sit on either side.
+| component.image, image_side (start/end), shape (arch/circle/rect), tone |
+| component.eyebrow, title, accent, text, points[] (text), button, url |
+#}
+{% import 'components.nm.macros' as nm %}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'paper' %}
+{% set side = include('components.nm.pick', {v: component.image_side})|trim ?: 'start' %}
+{% set shape = include('components.nm.pick', {v: component.shape})|trim ?: 'arch' %}
+{% set href = nm.href(component.url)|trim %}
+<section class="nm-section nm-split nm-toned nm-split--{{ side }}" data-tone="{{ tone }}" component-id="{{ componentId }}">
+    <div class="nm-container nm-split__grid">
+        {% if component.image %}
+            <figure class="nm-split__media nm-shape--{{ shape }}"><img src="{{ component.image }}" alt="{{ component.title }}" loading="lazy" width="800" height="1000"></figure>
+        {% endif %}
+        <div class="nm-split__copy">
+            {% include 'components.nm.head' with {c: component|merge({description: null})} %}
+            {% if component.text %}<p class="nm-split__text" data-reveal>{{ component.text|nl2br }}</p>{% endif %}
+            {% set points = component.points|default([]) %}
+            {% if points|length %}
+                <ul class="nm-split__points">
+                    {% for pt in points %}{% if pt.text %}<li data-reveal>{% include 'components.nm.icon' with {name: 'check', size: 16} %}{{ pt.text }}</li>{% endif %}{% endfor %}
+                </ul>
+            {% endif %}
+            {% if component.button %}<a class="nm-btn" href="{{ href }}" data-reveal>{{ component.button }}{% include 'components.nm.icon' with {name: 'arrow', size: 18} %}</a>{% endif %}
+        </div>
+    </div>
+</section>

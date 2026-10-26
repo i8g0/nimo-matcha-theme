@@ -77,19 +77,54 @@ export function rails(root = document) {
   });
 }
 
-/** Videos load and play only while on screen. */
+/** Videos load and play only while on screen. A [data-nm-vpause] button inside the same frame pauses
+    and resumes; a film the shopper paused stays paused until they press play again. */
+let pauseBound = false;
+const filmState = (v) => {
+  const frame = v.parentElement;
+  const btn = frame && frame.querySelector('[data-nm-vpause]');
+  if (!btn) return;
+  const paused = v.paused;
+  frame.classList.toggle('is-paused', paused);
+  btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+  btn.setAttribute('aria-label', paused ? btn.dataset.labelPlay : btn.dataset.labelPause);
+};
 export function videos(root = document) {
+  if (!pauseBound) {
+    pauseBound = true;
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-nm-vpause]');
+      if (!btn) return;
+      const v = btn.parentElement.querySelector('video');
+      if (!v) return;
+      if (v.paused) {
+        delete v.dataset.held;
+        if (!v.src && v.dataset.src) v.src = v.dataset.src;
+        v.play().catch(() => {});
+      } else {
+        v.dataset.held = '1';
+        v.pause();
+      }
+    });
+  }
   const list = $$('video[data-nm-video]:not([data-ready])', root);
   if (!list.length) return;
   const vio = new IntersectionObserver((entries) => {
     entries.forEach(({ target: v, isIntersecting }) => {
       if (isIntersecting) {
+        if (v.dataset.held) return;
         if (!v.src && v.dataset.src) v.src = v.dataset.src;
         if (!reduced()) v.play().catch(() => {});
       } else if (!v.paused) v.pause();
     });
   }, { threshold: 0.25 });
-  list.forEach((v) => { v.dataset.ready = '1'; vio.observe(v); });
+  list.forEach((v) => {
+    v.dataset.ready = '1';
+    v.muted = true;
+    v.addEventListener('play', () => filmState(v));
+    v.addEventListener('pause', () => filmState(v));
+    vio.observe(v);
+  });
 }
 
 /** Countdown to the end of the given day (store time ≈ Riyadh, UTC+3). Hides itself when the date passes. */

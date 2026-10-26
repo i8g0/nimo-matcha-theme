@@ -70,6 +70,9 @@
             if (n.deviceMemory && n.deviceMemory <= 2) lite = true;
             if (n.hardwareConcurrency && n.hardwareConcurrency <= 2) lite = true;
             try { if (localStorage.getItem('nm-lite') === '1') lite = true; } catch (e) {}
+            var level = "{{ include('components.nm.pick', {v: theme.settings.get('motion_level', 'full')})|trim ?: 'full' }}";
+            if (level === 'calm' || level === 'still') lite = true;
+            if (level === 'still') d.classList.add('nm-still');
             if (lite) d.classList.add('nm-lite');
         })();
     </script>
@@ -100,7 +103,7 @@
     {% hook 'head:end' %}
 </head>
 {% set has_tabbar = theme.settings.get('show_bottom_nav', true) %}
-<body id="app" class="nm theme-raed page-{{ page.slug|replace({'.': '-'}) }} {{ has_tabbar ? 'has-tabbar' : '' }} {% hook 'body:classes' %}">
+<body id="app" class="nm theme-raed {{ theme.settings.get('show_scroll_progress', true) is same as(false) ? 'no-progress' : '' }} page-{{ page.slug|replace({'.': '-'}) }} {{ has_tabbar ? 'has-tabbar' : '' }} {% hook 'body:classes' %}">
 {% hook 'body:start' %}
 <a class="nm-sr" href="#main-content">{{ trans('nm.skip') }}</a>
 
@@ -114,6 +117,7 @@
 
 {% include 'components.nm.cart-drawer' %}
 {% include 'components.nm.popup' %}
+{% include 'components.nm.floating' %}
 {% if has_tabbar %}{% include 'components.nm.tabbar' %}{% endif %}
 
 {% if __preview is not defined %}

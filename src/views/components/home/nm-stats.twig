@@ -1,0 +1,22 @@
+{#
+  Brand numbers that count up once when they come into view (customers, cups, rating…).
+| component.tone | paper / sand / night / orange / pink / leaf |
+| component.items[] | value (number), prefix, suffix, label |
+#}
+{% set tone = include('components.nm.pick', {v: component.tone})|trim ?: 'paper' %}
+{% set items = component.items|default([]) %}
+{% if items|length %}
+<section class="nm-section nm-section--tight nm-stats nm-toned" data-tone="{{ tone }}" component-id="{{ componentId }}">
+    <div class="nm-container">
+        {% if component.title or component.eyebrow %}{% include 'components.nm.head' with {c: component, modifier: 'center'} %}{% endif %}
+        <ul class="nm-stats__list" style="--n: {{ items|length }}">
+            {% for s in items %}
+                <li class="nm-stats__item" data-reveal>
+                    <b class="nm-num"><span>{{ s.prefix }}</span><span data-nm-count="{{ s.value }}">{{ s.value }}</span><span>{{ s.suffix }}</span></b>
+                    <span>{{ s.label }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endif %}
