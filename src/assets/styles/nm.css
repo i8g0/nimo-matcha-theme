@@ -1394,7 +1394,7 @@ html:not(.js) [data-reveal] { opacity: 1; transform: none; }
 .nm-cmp--hl .nm-cmp__row--head .nm-cmp__a { background: var(--orange); color: #fff; }
 .nm-cmp__a em { font-style: normal; font-size: 11px; font-weight: 500; letter-spacing: .02em; opacity: .9; }
 .nm-cmp__yes { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--leaf-pale); color: var(--green); }
-.nm-cmp__no { color: var(--muted-light); }
+.nm-cmp__no { color: var(--muted); font-weight: 600; }
 @media (max-width: 599px) { .nm-cmp__row > span { padding: 12px 8px; font-size: 13px; } .nm-cmp__row--head > span { font-size: 14px; } }
 
 /* ---------- coupon ticket ---------- */
